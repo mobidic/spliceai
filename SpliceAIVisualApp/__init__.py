@@ -1,12 +1,14 @@
 import os
-from flask import Flask, render_template
-from flask_cors import CORS
+from flask import Flask
+# from flask_cors import CORS
 # https://flask-wtf.readthedocs.io/en/stable/csrf.html
-from flask_wtf.csrf import CSRFProtect
+# from flask_wtf.csrf import CSRFProtect
 from flask_restful import Api
+from SpliceAIVisualApp.route.spliceai import SpliceAi
+from SpliceAIVisualApp.route.hello import Hello
 
 
-csrf = CSRFProtect()
+# csrf = CSRFProtect()
 
 
 def create_app(test_config=None):
@@ -18,7 +20,10 @@ def create_app(test_config=None):
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
-    csrf.init_app(app)
+    # csrf.init_app(app)
+    api = Api(app)
+    api.add_resource(SpliceAi, "/spliceai")
+    api.add_resource(Hello, "/hello")
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
