@@ -144,7 +144,7 @@ class SpliceAi(Resource):
         if result.returncode == 0:
             # success
             results = re.split(r'\[', str(result.stdout, 'utf-8').replace('\n', ''))
-            print(results)
+            # print(results)
             if not re.search(r'no_wt', results[1]):
                 # print(results)
                 # wt and mutant results
