@@ -1,2 +1,2 @@
 # spliceai
-flask implementation of spliceai
+REST API for spliceai
