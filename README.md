@@ -1,2 +1,2 @@
 # spliceaivisual
-flask implementation of spliceaivisual
+flask implementation of spliceai
