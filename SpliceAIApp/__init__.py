@@ -1,8 +1,8 @@
 import os
 from flask import Flask
 from flask_restful import Api
-from SpliceAIVisualApp.route.spliceai import SpliceAi
-from SpliceAIVisualApp.route.hello import Hello
+from SpliceAIApp.route.spliceai import SpliceAi
+from SpliceAIApp.route.hello import Hello
 
 
 def create_app(test_config=None):
