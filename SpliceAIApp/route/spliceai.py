@@ -3,6 +3,7 @@ import os
 import re
 import subprocess
 import json
+from collections import OrderedDict
 # flask imports
 from flask_restful import Resource
 from flask import request, jsonify, make_response, current_app
@@ -21,7 +22,7 @@ def jsonify_spliceai(seq, type):
     spliceai_res = []
     with open('/tmp/{}.txt'.format(type), mode='r') as spliceai_file:
         spliceai_res = spliceai_file.read()
-    json_dict = {}
+    json_dict = OrderedDict()
     i = 1
     for t in list(zip(seq, re.split('\n', spliceai_res))):
         json_dict[i] = t
@@ -29,7 +30,7 @@ def jsonify_spliceai(seq, type):
     return json.dumps(json_dict), json_dict
 
 
-def get_data_form_cache(key, r):
+def get_data_from_cache(key, r):
     # get data from redis cache and returns as json
     data = r.get(key)
     if data:
@@ -41,7 +42,7 @@ def get_data_form_cache(key, r):
 def return_json(message, spliceai_return_code=1, http_code=200, result=None):
     # prepare flask response
     return make_response(jsonify({
-        'spliecai_return_code': spliceai_return_code,
+        'spliceai_return_code': spliceai_return_code,
         'result': result,
         'error': message
     }), http_code)
@@ -68,10 +69,10 @@ class SpliceAi(Resource):
             mt_seq = input['mt_seq'].upper()
             wt_hash = hashlib.md5(wt_seq.encode()).hexdigest()
             mt_hash = hashlib.md5(mt_seq.encode()).hexdigest()
-            wt_acceptor = get_data_form_cache('{}_acceptor'.format(wt_hash), r)
-            wt_donor = get_data_form_cache('{}_donor'.format(wt_hash), r)
-            mt_acceptor = get_data_form_cache('{}_acceptor'.format(mt_hash), r)
-            mt_donor = get_data_form_cache('{}_donor'.format(mt_hash), r)
+            wt_acceptor = get_data_from_cache('{}_acceptor'.format(wt_hash), r)
+            wt_donor = get_data_from_cache('{}_donor'.format(wt_hash), r)
+            mt_acceptor = get_data_from_cache('{}_acceptor'.format(mt_hash), r)
+            mt_donor = get_data_from_cache('{}_donor'.format(mt_hash), r)
             if (wt_acceptor and
                     wt_donor and
                     mt_acceptor and
@@ -84,11 +85,11 @@ class SpliceAi(Resource):
                     {
                         'spliceai_context': context,
                         'wt_sequence': wt_seq,
-                        'wt_acceptor_scores': wt_acceptor,
-                        'wt_donor_scores': wt_donor,
+                        'wt_acceptor_scores': {int(k): [v] for k, v in wt_acceptor.items()},
+                        'wt_donor_scores': {int(k): [v] for k, v in wt_donor.items()},
                         'mt_sequence': mt_seq,
-                        'mt_acceptor_scores': mt_acceptor,
-                        'mt_donor_scores': mt_donor,
+                        'mt_acceptor_scores': {int(k): [v] for k, v in mt_acceptor.items()},
+                        'mt_donor_scores': {int(k): [v] for k, v in mt_donor.items()},
                     }
                 )
             if re.search('^[ATGC]+$', wt_seq) and \
@@ -113,8 +114,9 @@ class SpliceAi(Resource):
             mt_seq = input['mt_seq'].upper()
             # print('MT lenght: {}'.format(len(mt_seq)))
             mt_hash = hashlib.md5(mt_seq.encode()).hexdigest()
-            mt_acceptor = get_data_form_cache('{}_acceptor'.format(mt_hash), r)
-            mt_donor = get_data_form_cache('{}_donor'.format(mt_hash), r)
+            mt_acceptor = get_data_from_cache('{}_acceptor'.format(mt_hash), r)
+            # print(type(mt_acceptor))
+            mt_donor = get_data_from_cache('{}_donor'.format(mt_hash), r)
             if (mt_acceptor and
                     mt_donor):
                 # return values from cache
@@ -128,8 +130,8 @@ class SpliceAi(Resource):
                         'wt_acceptor_scores': wt_acceptor,
                         'wt_donor_scores': wt_donor,
                         'mt_sequence': mt_seq,
-                        'mt_acceptor_scores': mt_acceptor,
-                        'mt_donor_scores': mt_donor,
+                        'mt_acceptor_scores': {int(k): [v] for k, v in mt_acceptor.items()},
+                        'mt_donor_scores': {int(k): [v] for k, v in mt_donor.items()},
                     }
                 )
             if (not mt_acceptor or
@@ -156,7 +158,7 @@ class SpliceAi(Resource):
             # results = re.split(r'\[', str(result.stdout, 'utf-8').replace('\n', ''))
             # script returns context, wt_result ('t' or 'f', only to check if there is a result for wt)
             results = re.split(r';', str(result.stdout, 'utf-8').replace('\n', ''))
-            print(results)
+            # print(results)
             wt_seq = input['wt_seq'].upper() if input['wt_seq'] else ''
             mt_seq = input['mt_seq'].upper()
             # print(results)

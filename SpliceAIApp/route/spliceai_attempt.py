@@ -43,10 +43,10 @@ def get_data_form_cache(key, r):
         return None
 
 
-def return_json(message, spliecai_return_code=1, http_code=200, result=None):
+def return_json(message, spliceai_return_code=1, http_code=200, result=None):
     # prepare flask response
     return make_response(jsonify({
-        'spliecai_return_code': spliecai_return_code,
+        'spliceai_return_code': spliceai_return_code,
         'result': result,
         'error': message
     }), http_code)
