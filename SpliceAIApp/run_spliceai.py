@@ -1,3 +1,4 @@
+# import sys
 import argparse
 # spliceai import
 from keras.models import load_model
@@ -16,26 +17,35 @@ def main():
     wt_sequence = args.wt_seq
     mt_sequence = args.mt_seq
     context = int(args.context)
-    print(context)
+    # print('run_spliceai mt: {}'.format(len(mt_sequence)), file=sys.stderr)
+    # print(context)
     paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
     models = [load_model(resource_filename('spliceai', x)) for x in paths]
+    wt_result = 't'
     if wt_sequence:
         x = one_hot_encode('N'*(context//2) + wt_sequence + 'N'*(context//2))[None, :]
         y = np.mean([models[m].predict(x) for m in range(5)], axis=0)
         wt_acceptor_prob = y[0, :, 1]
         wt_donor_prob = y[0, :, 2]
     else:
-        wt_acceptor_prob = '[no_wt]'
-        wt_donor_prob = '[no_wt]'
+        wt_result = 'f'
+        wt_acceptor_prob = np.array([-1])
+        wt_donor_prob = np.array([-1])
     x = one_hot_encode('N'*(context//2) + mt_sequence + 'N'*(context//2))[None, :]
     y = np.mean([models[m].predict(x) for m in range(5)], axis=0)
     mt_acceptor_prob = y[0, :, 1]
     mt_donor_prob = y[0, :, 2]
 
-    print(wt_acceptor_prob)
-    print(wt_donor_prob)
-    print(mt_acceptor_prob)
-    print(mt_donor_prob)
+    # print(wt_acceptor_prob)
+    # print(wt_donor_prob)
+    # print(mt_acceptor_prob)
+    np.savetxt('/tmp/wt_acceptor_prob.txt', wt_acceptor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('/tmp/wt_donor_prob.txt', wt_donor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('/tmp/mt_acceptor_prob.txt', mt_acceptor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('/tmp/mt_donor_prob.txt', mt_donor_prob, fmt='%4.8f', delimiter=' ')
+    print('{0};{1}'.format(context, wt_result))
+    # print('run_spliceai mt_acceptor_prob: {}'.format(mt_acceptor_prob), file=sys.stderr, end='\n')
+    # print(mt_donor_prob)
     # with open('ref.bedGraph', mode='w') as bedgraph:
     #     bedgraph.write("browser position chr{}:{}-{}\ntrack name=\"    REF allele\" type=bedGraph description=\"spliceAI_REF     acceptor_sites = positive_values       donor_sites = negative_values\" visibility=full windowingFunction=maximum color=200,100,0 altColor=0,100,200 priority=20 autoScale=off viewLimits=-1:1 darkerLabels=on\n".format(chrom, pos-100, pos+100))
     #     for i, (i1, i2) in enumerate(zip(np.around(wt_acceptor_prob, 2), np.around(wt_donor_prob, 2))):

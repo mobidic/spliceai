@@ -14,14 +14,16 @@ def getAppRootDirectory():
     return os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 
-def jsonify_spliceai(seq, spliceai_results):
-    # from spliceai string result and input sequence build a dict
+def jsonify_spliceai(seq, type):
+    # from spliceai file result and input sequence build a dict
     # format: {'1': ('[ATCG]', 'spliceai_score'), ...}
     # returns a json from this dict
-    # [list(t) for t in zip((input['wt_seq']), re.split(' ', results[1].replace(r']', '')))]
+    spliceai_res = []
+    with open('/tmp/{}.txt'.format(type), mode='r') as spliceai_file:
+        spliceai_res = spliceai_file.read()
     json_dict = {}
     i = 1
-    for t in list(zip(seq, re.split(' ', spliceai_results.replace(r']', '')))):
+    for t in list(zip(seq, re.split('\n', spliceai_res))):
         json_dict[i] = t
         i += 1
     return json.dumps(json_dict), json_dict
@@ -109,6 +111,7 @@ class SpliceAi(Resource):
                 return return_json('Bad wt or mt sequences submitted')
         elif 'mt_seq' in input:
             mt_seq = input['mt_seq'].upper()
+            # print('MT lenght: {}'.format(len(mt_seq)))
             mt_hash = hashlib.md5(mt_seq.encode()).hexdigest()
             mt_acceptor = get_data_form_cache('{}_acceptor'.format(mt_hash), r)
             mt_donor = get_data_form_cache('{}_donor'.format(mt_hash), r)
@@ -150,17 +153,20 @@ class SpliceAi(Resource):
             return return_json('Bad parameters received')
         if result.returncode == 0:
             # success
-            results = re.split(r'\[', str(result.stdout, 'utf-8').replace('\n', ''))
+            # results = re.split(r'\[', str(result.stdout, 'utf-8').replace('\n', ''))
+            # script returns context, wt_result ('t' or 'f', only to check if there is a result for wt)
+            results = re.split(r';', str(result.stdout, 'utf-8').replace('\n', ''))
+            print(results)
             wt_seq = input['wt_seq'].upper() if input['wt_seq'] else ''
             mt_seq = input['mt_seq'].upper()
             # print(results)
-            if not re.search(r'no_wt', results[1]):
+            if results[1] == 't':
                 # print(results)
                 # wt and mutant results
-                wt_acceptor_redis, wt_acceptor = jsonify_spliceai(wt_seq, results[1])
-                wt_donor_redis, wt_donor = jsonify_spliceai(wt_seq, results[2])
-                mt_acceptor_redis, mt_acceptor = jsonify_spliceai(mt_seq, results[3])
-                mt_donor_redis, mt_donor = jsonify_spliceai(mt_seq, results[4])
+                wt_acceptor_redis, wt_acceptor = jsonify_spliceai(wt_seq, 'wt_acceptor_prob')
+                wt_donor_redis, wt_donor = jsonify_spliceai(wt_seq, 'wt_donor_prob')
+                mt_acceptor_redis, mt_acceptor = jsonify_spliceai(mt_seq, 'mt_acceptor_prob')
+                mt_donor_redis, mt_donor = jsonify_spliceai(mt_seq, 'mt_donor_prob')
                 # populate redis
                 wt_hash = hashlib.md5(wt_seq.encode()).hexdigest()
                 mt_hash = hashlib.md5(mt_seq.encode()).hexdigest()
@@ -170,8 +176,8 @@ class SpliceAi(Resource):
                 r.set('{}_donor'.format(mt_hash), mt_donor_redis)
             else:
                 # mutant only
-                mt_acceptor_redis, mt_acceptor = jsonify_spliceai(mt_seq, results[3])
-                mt_donor_redis, mt_donor = jsonify_spliceai(mt_seq, results[4])
+                mt_acceptor_redis, mt_acceptor = jsonify_spliceai(mt_seq, 'mt_acceptor_prob')
+                mt_donor_redis, mt_donor = jsonify_spliceai(mt_seq, 'mt_donor_prob')
                 # populate redis
                 mt_hash = hashlib.md5(mt_seq.encode()).hexdigest()
                 r.set('{}_acceptor'.format(mt_hash), mt_acceptor_redis)
