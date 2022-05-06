@@ -85,11 +85,11 @@ class SpliceAi(Resource):
                     {
                         'spliceai_context': context,
                         'wt_sequence': wt_seq,
-                        'wt_acceptor_scores': {int(k): [v] for k, v in wt_acceptor.items()},
-                        'wt_donor_scores': {int(k): [v] for k, v in wt_donor.items()},
+                        'wt_acceptor_scores': {int(k): v for k, v in wt_acceptor.items()},
+                        'wt_donor_scores': {int(k): v for k, v in wt_donor.items()},
                         'mt_sequence': mt_seq,
-                        'mt_acceptor_scores': {int(k): [v] for k, v in mt_acceptor.items()},
-                        'mt_donor_scores': {int(k): [v] for k, v in mt_donor.items()},
+                        'mt_acceptor_scores': {int(k): v for k, v in mt_acceptor.items()},
+                        'mt_donor_scores': {int(k): v for k, v in mt_donor.items()},
                     }
                 )
             if re.search('^[ATGC]+$', wt_seq) and \
@@ -130,8 +130,8 @@ class SpliceAi(Resource):
                         'wt_acceptor_scores': wt_acceptor,
                         'wt_donor_scores': wt_donor,
                         'mt_sequence': mt_seq,
-                        'mt_acceptor_scores': {int(k): [v] for k, v in mt_acceptor.items()},
-                        'mt_donor_scores': {int(k): [v] for k, v in mt_donor.items()},
+                        'mt_acceptor_scores': {int(k): v for k, v in mt_acceptor.items()},
+                        'mt_donor_scores': {int(k): v for k, v in mt_donor.items()},
                     }
                 )
             if (not mt_acceptor or
