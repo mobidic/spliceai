@@ -27,6 +27,7 @@ def jsonify_spliceai(seq, type):
     for t in list(zip(seq, re.split('\n', spliceai_res))):
         json_dict[i] = t
         i += 1
+    os.remove('{0}/{1}.txt'.format(current_app.config['TMP_FOLDER'], type))
     return json.dumps(json_dict), json_dict
 
 
@@ -110,8 +111,12 @@ class SpliceAi(Resource):
                     '{}/run_spliceai.py'.format(getAppRootDirectory()),
                     '--wt-seq',
                     wt_seq,
+                    '--wt-hash',
+                    wt_hash,
                     '--mt-seq',
                     mt_seq,
+                    '--mt-hash',
+                    mt_hash,
                     '--context',
                     context
                 ])
@@ -168,6 +173,8 @@ class SpliceAi(Resource):
                     '{}/run_spliceai.py'.format(getAppRootDirectory()),
                     '--mt-seq',
                     mt_seq,
+                    '--mt-hash',
+                    mt_hash,
                     '--context',
                     context
                 ])

@@ -11,12 +11,16 @@ def main():
     parser = argparse.ArgumentParser(usage='python run_spliceai.py [--seq ATGCATCAGC --context 10000]', description='Compute spliceai raw predictions for a given DNA sequence.')
     parser.add_argument('-wt', '--wt-seq', default=None, required=False, help='Wild type sequence to be computed.')
     parser.add_argument('-mt', '--mt-seq', default='CGATCTGACGTGGGTGTCATCGCATTATCGATATTGCAT', required=False, help='Mutant sequence to be computed.')
+    parser.add_argument('-wth', '--wt-hash', default=None, required=False, help='Wild type sequence hash.')
+    parser.add_argument('-mth', '--mt-hash', default='4e8dc438ea52c410caabb1a0774494c6', required=False, help='Mutant sequence hash.')
     parser.add_argument('-c', '--context', default=10000, required=False, help='Context nucleotide to be considered for computation. Default: 10000.')
     parser.add_argument('-t', '--tmp_folder', default='/var/www/tmp_res', required=False, help='Path to tmp folder to store spliceai results. Default: /var/www/tmp_res.')
     args = parser.parse_args()
 
     wt_sequence = args.wt_seq
+    wt_hash = args.wt_hash
     mt_sequence = args.mt_seq
+    mt_hash = args.mt_hash
     context = int(args.context)
     tmp_folder = args.tmp_folder
     # print('run_spliceai mt: {}'.format(len(mt_sequence)), file=sys.stderr)
@@ -41,10 +45,10 @@ def main():
     # print(wt_acceptor_prob)
     # print(wt_donor_prob)
     # print(mt_acceptor_prob)
-    np.savetxt('{0}/wt_acceptor_prob.txt'.format(tmp_folder), wt_acceptor_prob, fmt='%4.8f', delimiter=' ')
-    np.savetxt('{0}/wt_donor_prob.txt'.format(tmp_folder), wt_donor_prob, fmt='%4.8f', delimiter=' ')
-    np.savetxt('{0}/mt_acceptor_prob.txt'.format(tmp_folder), mt_acceptor_prob, fmt='%4.8f', delimiter=' ')
-    np.savetxt('{0}/mt_donor_prob.txt'.format(tmp_folder), mt_donor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('{0}/{1}_wt_acceptor_prob.txt'.format(tmp_folder, wt_hash), wt_acceptor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('{0}/{1}_wt_donor_prob.txt'.format(tmp_folder, wt_hash), wt_donor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('{0}/{1}_mt_acceptor_prob.txt'.format(tmp_folder, mt_hash), mt_acceptor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('{0}/{1}_mt_donor_prob.txt'.format(tmp_folder, mt_hash), mt_donor_prob, fmt='%4.8f', delimiter=' ')
     print('{0};{1}'.format(context, wt_result))
 
 
