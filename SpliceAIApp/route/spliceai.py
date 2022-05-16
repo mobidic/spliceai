@@ -15,19 +15,19 @@ def getAppRootDirectory():
     return os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 
-def jsonify_spliceai(seq, type):
+def jsonify_spliceai(seq, hash, type):
     # from spliceai file result and input sequence build a dict
     # format: {'1': ('[ATCG]', 'spliceai_score'), ...}
     # returns a json from this dict
     spliceai_res = []
-    with open('{0}/{1}.txt'.format(current_app.config['TMP_FOLDER'], type), mode='r') as spliceai_file:
+    with open('{0}/{1}_{2}.txt'.format(current_app.config['TMP_FOLDER'], hash, type), mode='r') as spliceai_file:
         spliceai_res = spliceai_file.read()
     json_dict = OrderedDict()
     i = 1
     for t in list(zip(seq, re.split('\n', spliceai_res))):
         json_dict[i] = t
         i += 1
-    os.remove('{0}/{1}.txt'.format(current_app.config['TMP_FOLDER'], type))
+    os.remove('{0}/{1}_{2}.txt'.format(current_app.config['TMP_FOLDER'], hash, type))
     return json.dumps(json_dict), json_dict
 
 
@@ -207,23 +207,23 @@ class SpliceAi(Resource):
             if results[1] == 't':
                 # print(results)
                 # wt and mutant results
-                wt_acceptor_redis, wt_acceptor = jsonify_spliceai(wt_seq, 'wt_acceptor_prob')
-                wt_donor_redis, wt_donor = jsonify_spliceai(wt_seq, 'wt_donor_prob')
-                mt_acceptor_redis, mt_acceptor = jsonify_spliceai(mt_seq, 'mt_acceptor_prob')
-                mt_donor_redis, mt_donor = jsonify_spliceai(mt_seq, 'mt_donor_prob')
-                # populate redis
                 wt_hash = hashlib.md5(wt_seq.encode()).hexdigest()
                 mt_hash = hashlib.md5(mt_seq.encode()).hexdigest()
+                wt_acceptor_redis, wt_acceptor = jsonify_spliceai(wt_seq, wt_hash, 'wt_acceptor_prob')
+                wt_donor_redis, wt_donor = jsonify_spliceai(wt_seq, wt_hash, 'wt_donor_prob')
+                mt_acceptor_redis, mt_acceptor = jsonify_spliceai(mt_seq, mt_hash, 'mt_acceptor_prob')
+                mt_donor_redis, mt_donor = jsonify_spliceai(mt_seq, mt_hash, 'mt_donor_prob')
+                # populate redis
                 r.set('{}_acceptor'.format(wt_hash), wt_acceptor_redis)
                 r.set('{}_donor'.format(wt_hash), wt_donor_redis)
                 r.set('{}_acceptor'.format(mt_hash), mt_acceptor_redis)
                 r.set('{}_donor'.format(mt_hash), mt_donor_redis)
             else:
                 # mutant only
-                mt_acceptor_redis, mt_acceptor = jsonify_spliceai(mt_seq, 'mt_acceptor_prob')
-                mt_donor_redis, mt_donor = jsonify_spliceai(mt_seq, 'mt_donor_prob')
-                # populate redis
                 mt_hash = hashlib.md5(mt_seq.encode()).hexdigest()
+                mt_acceptor_redis, mt_acceptor = jsonify_spliceai(mt_seq, mt_hash, 'mt_acceptor_prob')
+                mt_donor_redis, mt_donor = jsonify_spliceai(mt_seq, mt_hash, 'mt_donor_prob')
+                # populate redis
                 r.set('{}_acceptor'.format(mt_hash), mt_acceptor_redis)
                 r.set('{}_donor'.format(mt_hash), mt_donor_redis)
             return return_json(
