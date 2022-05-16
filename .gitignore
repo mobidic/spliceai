@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # custom
-SpliceAIVisualApp/hidden/*
+SpliceAIApp/hidden/*
