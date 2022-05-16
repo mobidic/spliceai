@@ -48,6 +48,13 @@ def return_json(message, spliceai_return_code=1, http_code=200, result=None):
     }), http_code)
 
 
+def run_spliceai(args_list):
+    return subprocess.run(
+        args_list,
+        stdout=subprocess.PIPE
+    )
+
+
 class SpliceAi(Resource):
     def get(self):
         r = redis.Redis(
@@ -95,19 +102,34 @@ class SpliceAi(Resource):
             if re.search('^[ATGC]+$', wt_seq) and \
                     re.search('^[ATGC]+$', mt_seq):
                 # print(input['wt_seq'])
-                result = subprocess.run(
-                    [
-                        current_app.config['PYTHON'],
-                        '{}/run_spliceai.py'.format(getAppRootDirectory()),
-                        '--wt-seq',
-                        wt_seq,
-                        '--mt-seq',
-                        mt_seq,
-                        '--context',
-                        context
-                    ],
-                    stdout=subprocess.PIPE
-                )
+                args_list = []
+                if 'SRUN' in current_app.config:
+                    args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1']
+                args_list.extend([
+                    current_app.config['PYTHON'],
+                    '{}/run_spliceai.py'.format(getAppRootDirectory()),
+                    '--wt-seq',
+                    wt_seq,
+                    '--mt-seq',
+                    mt_seq,
+                    '--context',
+                    context
+                ])
+                print(args_list)
+                result = run_spliceai(args_list)
+                # result = subprocess.run(
+                #     [
+                #         current_app.config['PYTHON'],
+                #         '{}/run_spliceai.py'.format(getAppRootDirectory()),
+                #         '--wt-seq',
+                #         wt_seq,
+                #         '--mt-seq',
+                #         mt_seq,
+                #         '--context',
+                #         context
+                #     ],
+                #     stdout=subprocess.PIPE
+                # )
             else:
                 return return_json('Bad wt or mt sequences submitted')
         elif 'mt_seq' in input:
@@ -138,17 +160,30 @@ class SpliceAi(Resource):
                     not mt_donor) and \
                     re.search('^[ATGCatgc]+$', input['mt_seq']):
                 input['wt_seq'] = None
-                result = subprocess.run(
-                    [
-                        current_app.config['PYTHON'],
-                        '{}/run_spliceai.py'.format(getAppRootDirectory()),
-                        '--mt-seq',
-                        mt_seq,
-                        '--context',
-                        context
-                    ],
-                    stdout=subprocess.PIPE
-                )
+                args_list = []
+                if 'SRUN' in current_app.config:
+                    args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1']
+                args_list.extend([
+                    current_app.config['PYTHON'],
+                    '{}/run_spliceai.py'.format(getAppRootDirectory()),
+                    '--mt-seq',
+                    mt_seq,
+                    '--context',
+                    context
+                ])
+                print(args_list)
+                result = run_spliceai(args_list)
+                # result = subprocess.run(
+                #     [
+                #         current_app.config['PYTHON'],
+                #         '{}/run_spliceai.py'.format(getAppRootDirectory()),
+                #         '--mt-seq',
+                #         mt_seq,
+                #         '--context',
+                #         context
+                #     ],
+                #     stdout=subprocess.PIPE
+                # )
             else:
                 return return_json('Bad mt sequence submitted')
         else:
