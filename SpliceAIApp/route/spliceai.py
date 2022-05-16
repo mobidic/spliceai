@@ -115,7 +115,7 @@ class SpliceAi(Resource):
                     '--context',
                     context
                 ])
-                print(args_list)
+                # print(args_list)
                 result = run_spliceai(args_list)
                 # result = subprocess.run(
                 #     [
