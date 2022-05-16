@@ -20,7 +20,7 @@ def jsonify_spliceai(seq, type):
     # format: {'1': ('[ATCG]', 'spliceai_score'), ...}
     # returns a json from this dict
     spliceai_res = []
-    with open('/tmp/{}.txt'.format(type), mode='r') as spliceai_file:
+    with open('{0}/{1}.txt'.format(current_app.config['TMP_FOLDER'], type), mode='r') as spliceai_file:
         spliceai_res = spliceai_file.read()
     json_dict = OrderedDict()
     i = 1
@@ -171,7 +171,7 @@ class SpliceAi(Resource):
                     '--context',
                     context
                 ])
-                print(args_list)
+                # print(args_list)
                 result = run_spliceai(args_list)
                 # result = subprocess.run(
                 #     [

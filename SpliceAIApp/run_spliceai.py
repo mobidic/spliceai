@@ -12,11 +12,13 @@ def main():
     parser.add_argument('-wt', '--wt-seq', default=None, required=False, help='Wild type sequence to be computed.')
     parser.add_argument('-mt', '--mt-seq', default='CGATCTGACGTGGGTGTCATCGCATTATCGATATTGCAT', required=False, help='Mutant sequence to be computed.')
     parser.add_argument('-c', '--context', default=10000, required=False, help='Context nucleotide to be considered for computation. Default: 10000.')
+    parser.add_argument('-t', '--tmp_folder', default='/var/www/tmp_res', required=False, help='Path to tmp folder to store spliceai results. Default: /var/www/tmp_res.')
     args = parser.parse_args()
 
     wt_sequence = args.wt_seq
     mt_sequence = args.mt_seq
     context = int(args.context)
+    tmp_folder = args.tmp_folder
     # print('run_spliceai mt: {}'.format(len(mt_sequence)), file=sys.stderr)
     # print(context)
     paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
@@ -39,17 +41,11 @@ def main():
     # print(wt_acceptor_prob)
     # print(wt_donor_prob)
     # print(mt_acceptor_prob)
-    np.savetxt('/tmp/wt_acceptor_prob.txt', wt_acceptor_prob, fmt='%4.8f', delimiter=' ')
-    np.savetxt('/tmp/wt_donor_prob.txt', wt_donor_prob, fmt='%4.8f', delimiter=' ')
-    np.savetxt('/tmp/mt_acceptor_prob.txt', mt_acceptor_prob, fmt='%4.8f', delimiter=' ')
-    np.savetxt('/tmp/mt_donor_prob.txt', mt_donor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('{0}/wt_acceptor_prob.txt'.format(tmp_folder), wt_acceptor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('{0}/wt_donor_prob.txt'.format(tmp_folder), wt_donor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('{0}/mt_acceptor_prob.txt'.format(tmp_folder), mt_acceptor_prob, fmt='%4.8f', delimiter=' ')
+    np.savetxt('{0}/mt_donor_prob.txt'.format(tmp_folder), mt_donor_prob, fmt='%4.8f', delimiter=' ')
     print('{0};{1}'.format(context, wt_result))
-    # print('run_spliceai mt_acceptor_prob: {}'.format(mt_acceptor_prob), file=sys.stderr, end='\n')
-    # print(mt_donor_prob)
-    # with open('ref.bedGraph', mode='w') as bedgraph:
-    #     bedgraph.write("browser position chr{}:{}-{}\ntrack name=\"    REF allele\" type=bedGraph description=\"spliceAI_REF     acceptor_sites = positive_values       donor_sites = negative_values\" visibility=full windowingFunction=maximum color=200,100,0 altColor=0,100,200 priority=20 autoScale=off viewLimits=-1:1 darkerLabels=on\n".format(chrom, pos-100, pos+100))
-    #     for i, (i1, i2) in enumerate(zip(np.around(wt_acceptor_prob, 2), np.around(wt_donor_prob, 2))):
-    #         bedgraph.write('chr{}\t{}\t{}\t{}\n'.format(chrom, cstart + strand*i-1, cstart + strand*i, i1 if i1>i2 else i2*(-1)))
 
 
 if __name__ == "__main__":
