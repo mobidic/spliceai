@@ -26,7 +26,7 @@ def main():
     # print('run_spliceai mt: {}'.format(len(mt_sequence)), file=sys.stderr)
     # print(context)
     paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
-    models = [load_model(resource_filename('spliceai', x)) for x in paths]
+    models = [load_model(resource_filename('spliceai', x), compile=False) for x in paths]
     wt_result = 't'
     if wt_sequence:
         x = one_hot_encode('N'*(context//2) + wt_sequence + 'N'*(context//2))[None, :]

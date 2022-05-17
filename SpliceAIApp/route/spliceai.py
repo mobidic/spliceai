@@ -122,19 +122,6 @@ class SpliceAi(Resource):
                 ])
                 # print(args_list)
                 result = run_spliceai(args_list)
-                # result = subprocess.run(
-                #     [
-                #         current_app.config['PYTHON'],
-                #         '{}/run_spliceai.py'.format(getAppRootDirectory()),
-                #         '--wt-seq',
-                #         wt_seq,
-                #         '--mt-seq',
-                #         mt_seq,
-                #         '--context',
-                #         context
-                #     ],
-                #     stdout=subprocess.PIPE
-                # )
             else:
                 return return_json('Bad wt or mt sequences submitted')
         elif 'mt_seq' in input:
@@ -180,17 +167,6 @@ class SpliceAi(Resource):
                 ])
                 # print(args_list)
                 result = run_spliceai(args_list)
-                # result = subprocess.run(
-                #     [
-                #         current_app.config['PYTHON'],
-                #         '{}/run_spliceai.py'.format(getAppRootDirectory()),
-                #         '--mt-seq',
-                #         mt_seq,
-                #         '--context',
-                #         context
-                #     ],
-                #     stdout=subprocess.PIPE
-                # )
             else:
                 return return_json('Bad mt sequence submitted')
         else:
