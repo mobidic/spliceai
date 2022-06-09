@@ -100,8 +100,8 @@ class SpliceAi(Resource):
                         'mt_donor_scores': {int(k): v for k, v in mt_donor.items()},
                     }
                 )
-            if re.search('^[ATGC]+$', wt_seq) and \
-                    re.search('^[ATGC]+$', mt_seq):
+            if re.search('^[ATGCNatgcn]+$', wt_seq) and \
+                    re.search('^[ATGCNatgcn]+$', mt_seq):
                 # print(input['wt_seq'])
                 args_list = []
                 if 'SRUN' in current_app.config:
@@ -150,7 +150,7 @@ class SpliceAi(Resource):
                 )
             if (not mt_acceptor or
                     not mt_donor) and \
-                    re.search('^[ATGCatgc]+$', input['mt_seq']):
+                    re.search('^[ATGCNatgcn]+$', input['mt_seq']):
                 input['wt_seq'] = None
                 args_list = []
                 if 'SRUN' in current_app.config:
