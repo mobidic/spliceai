@@ -15,6 +15,12 @@ def getAppRootDirectory():
     return os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 
+def writeSeqInTmpFile(hash, seq, type):
+    with open('{0}/{1}_{2}_sequence.txt'.format(current_app.config['TMP_FOLDER'], hash, type), 'w') as seq_file:
+        seq_file.write(seq)
+    seq_file.close()
+
+
 def jsonify_spliceai(seq, hash, type):
     # from spliceai file result and input sequence build a dict
     # format: {'1': ('[ATCG]', 'spliceai_score'), ...}
@@ -103,18 +109,21 @@ class SpliceAi(Resource):
             if re.search('^[ATGCNatgcn]+$', wt_seq) and \
                     re.search('^[ATGCNatgcn]+$', mt_seq):
                 # print(input['wt_seq'])
+                # print wt_seq and mt_seq in a file as depending on the transcript size we may trigger the OS error max arg size limit (e.g. with PCDH15 or DMD)
+                writeSeqInTmpFile(wt_hash, wt_seq, 'wt')
+                writeSeqInTmpFile(mt_hash, mt_seq, 'mt')
                 args_list = []
                 if 'SRUN' in current_app.config:
                     args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1']
                 args_list.extend([
                     current_app.config['PYTHON'],
                     '{}/run_spliceai.py'.format(getAppRootDirectory()),
-                    '--wt-seq',
-                    wt_seq,
+                    # '--wt-seq',
+                    # wt_seq,
                     '--wt-hash',
                     wt_hash,
-                    '--mt-seq',
-                    mt_seq,
+                    # '--mt-seq',
+                    # mt_seq,
                     '--mt-hash',
                     mt_hash,
                     '--context',
@@ -153,13 +162,15 @@ class SpliceAi(Resource):
                     re.search('^[ATGCNatgcn]+$', input['mt_seq']):
                 input['wt_seq'] = None
                 args_list = []
+                # print wt_seq and mt_seq in a file as depending on the transcript size we may trigger the OS error max arg size limit (e.g. with PCDH15 or DMD)
+                writeSeqInTmpFile(mt_hash, mt_seq, 'mt')
                 if 'SRUN' in current_app.config:
                     args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1']
                 args_list.extend([
                     current_app.config['PYTHON'],
                     '{}/run_spliceai.py'.format(getAppRootDirectory()),
-                    '--mt-seq',
-                    mt_seq,
+                    # '--mt-seq',
+                    # mt_seq,
                     '--mt-hash',
                     mt_hash,
                     '--context',
