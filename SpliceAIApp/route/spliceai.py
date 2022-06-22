@@ -112,9 +112,10 @@ class SpliceAi(Resource):
                 # print wt_seq and mt_seq in a file as depending on the transcript size we may trigger the OS error max arg size limit (e.g. with PCDH15 or DMD)
                 writeSeqInTmpFile(wt_hash, wt_seq, 'wt')
                 writeSeqInTmpFile(mt_hash, mt_seq, 'mt')
+                partition = 'spliceailight' if len(mt_seq) < 21000 else 'spliceaiheavy'
                 args_list = []
                 if 'SRUN' in current_app.config:
-                    args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1']
+                    args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1', '-p', partition]
                 args_list.extend([
                     current_app.config['PYTHON'],
                     '{}/run_spliceai.py'.format(getAppRootDirectory()),
@@ -161,11 +162,12 @@ class SpliceAi(Resource):
                     not mt_donor) and \
                     re.search('^[ATGCNatgcn]+$', input['mt_seq']):
                 input['wt_seq'] = None
+                partition = 'spliceailight' if len(mt_seq) < 21000 else 'spliceaiheavy'
                 args_list = []
                 # print wt_seq and mt_seq in a file as depending on the transcript size we may trigger the OS error max arg size limit (e.g. with PCDH15 or DMD)
                 writeSeqInTmpFile(mt_hash, mt_seq, 'mt')
                 if 'SRUN' in current_app.config:
-                    args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1']
+                    args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1', '-p', partition]
                 args_list.extend([
                     current_app.config['PYTHON'],
                     '{}/run_spliceai.py'.format(getAppRootDirectory()),
