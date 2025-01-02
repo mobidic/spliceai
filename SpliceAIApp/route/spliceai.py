@@ -63,15 +63,15 @@ def run_spliceai(args_list):
 
 
 class SpliceAi(Resource):
-    def get(self):
+    def post(self):
         r = redis.Redis(
             host=current_app.config['CACHE_REDIS_HOST'],
             port=current_app.config['CACHE_REDIS_PORT'],
             socket_timeout=current_app.config['CACHE_DEFAULT_TIMEOUT'],
             db=0
         )
+        # input = request.get_json(force=True)
         input = request.get_json()
-        # print(input)
         context = '10000'
         wt_acceptor = wt_donor = mt_acceptor = mt_donor = None
         if 'context' in input and \
