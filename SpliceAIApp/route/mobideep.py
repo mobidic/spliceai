@@ -103,10 +103,10 @@ class MobiDeep(Resource):
                 'MobiDeepLogScore': None
             }
             for line in results:
-                match_obj = re.search('MobiDeep_raw_score":\s([\d\.]+)', line)
+                match_obj = re.search('MobiDeep_raw_score":\s([\d\.e-]+)', line)
                 if match_obj:
                     mobideep_results['MobiDeepRawscore'] = "{:.6f}".format(float(match_obj.group(1)))
-                match_obj = re.search('MobiDeep_log_score":\s([\d\.]+)', line)
+                match_obj = re.search('MobiDeep_log_score":\s([\d\.e-]+)', line)
                 if match_obj:
                     mobideep_results['MobiDeepLogScore'] = "{:.6f}".format(float(match_obj.group(1)))
             if 'MobiDeepLogScore' in mobideep_results and \
