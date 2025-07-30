@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_restful import Api
 from SpliceAIApp.route.spliceai import SpliceAi
+from SpliceAIApp.route.mobideep import MobiDeep
 from SpliceAIApp.route.hello import Hello
 
 
@@ -15,6 +16,7 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
     api = Api(app)
     api.add_resource(SpliceAi, "/spliceai")
+    api.add_resource(MobiDeep, "/mobideep")
     api.add_resource(Hello, "/hello")
     # ensure the instance folder exists
     try:
