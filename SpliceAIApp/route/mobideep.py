@@ -71,7 +71,7 @@ class MobiDeep(Resource):
                     200,
                     redis_result
                 )
-            if re.search(r'^[\w\.]+\s[\w\.-]+\s[\w\.]+\s[\w\.]+\s[\w\.-]+$', raw_input):
+            if re.search(r'^[\w\.]+\s[\w\.-]+\s[\w\.]+\s[\w\.-]+\s[\w\.]+$', raw_input):
                 # otherwise runs MobiDeep through SLURM
                 partition = 'spliceailight'
                 args_list = []
