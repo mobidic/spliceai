@@ -82,7 +82,7 @@ class MobiDeep(Resource):
                     current_app.config['APPTAINER'],
                     'run',
                     '--bind',
-                    current_app.config['ENV_BIN'],
+                    '{0}squashfuse'.format(current_app.config['ENV_BIN']),
                     '{}/mobideep_mobidetails.sif'.format(getAppRootDirectory()),
                     input_list[0],
                     input_list[1],
