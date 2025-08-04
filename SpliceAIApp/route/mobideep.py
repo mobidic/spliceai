@@ -81,6 +81,8 @@ class MobiDeep(Resource):
                 args_list.extend([
                     current_app.config['APPTAINER'],
                     'run',
+                    '--bind',
+                    current_app.config['ENV_BIN'],
                     '{}/mobideep_mobidetails.sif'.format(getAppRootDirectory()),
                     input_list[0],
                     input_list[1],
