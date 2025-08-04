@@ -81,8 +81,6 @@ class MobiDeep(Resource):
                 args_list.extend([
                     current_app.config['APPTAINER'],
                     'run',
-                    '--env',
-                    'SQUASHFUSE_PATH={0}squashfuse'.format(current_app.config['ENV_BIN']),
                     '{}/mobideep_mobidetails.sif'.format(getAppRootDirectory()),
                     input_list[0],
                     input_list[1],
@@ -91,7 +89,6 @@ class MobiDeep(Resource):
                     input_list[4],
 
                 ])
-                print(args_list)
                 result = run_spliceai(args_list)
             else:
                 return return_json('Bad mobideep input submitted', 1)
