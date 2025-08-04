@@ -50,7 +50,7 @@ class MobiDeep(Resource):
             host=current_app.config['CACHE_REDIS_HOST'],
             port=current_app.config['CACHE_REDIS_PORT'],
             socket_timeout=current_app.config['CACHE_DEFAULT_TIMEOUT'],
-            db=0
+            db=1
         )
         input = request.get_json()
         # input should be:
