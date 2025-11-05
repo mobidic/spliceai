@@ -76,7 +76,7 @@ class Spip(Resource):
                 # runs SPiP through SLURM
                 partition = 'spliceailight'
                 args_list = []
-                
+                print(getAppRootDirectory())
                 if 'SRUN' in current_app.config:
                     args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1', '-J', 'spip','-p', partition]
                 args_list.extend([
