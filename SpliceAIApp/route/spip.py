@@ -76,7 +76,6 @@ class Spip(Resource):
                 # runs SPiP through SLURM
                 partition = 'spliceailight'
                 args_list = []
-                print(getAppRootDirectory())
                 if 'SRUN' in current_app.config:
                     args_list = [current_app.config['SRUN'], '-N', '1', '-c', '1', '-J', 'spip','-p', partition]
                 args_list.extend([
@@ -97,6 +96,7 @@ class Spip(Resource):
                     '{0}/hidden/RefFiles/transcriptome_hg38.RData'.format(getAppRootDirectory())
                 ])
                 result = run_spip(args_list)
+                print(args_list)
             else:
                 return return_json('Bad spip input submitted', 1)
         else:
