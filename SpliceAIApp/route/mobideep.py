@@ -12,22 +12,6 @@ import redis
 from .spliceai import getAppRootDirectory, run_spliceai, get_data_from_cache
 
 
-def jsonify_spliceai(seq, hash, type):
-    # from spliceai file result and input sequence build a dict
-    # format: {'1': ('[ATCG]', 'spliceai_score'), ...}
-    # returns a json from this dict
-    spliceai_res = []
-    with open('{0}/{1}_{2}.txt'.format(current_app.config['TMP_FOLDER'], hash, type), mode='r') as spliceai_file:
-        spliceai_res = spliceai_file.read()
-    json_dict = OrderedDict()
-    i = 1
-    for t in list(zip(seq, re.split('\n', spliceai_res))):
-        json_dict[i] = t
-        i += 1
-    os.remove('{0}/{1}_{2}.txt'.format(current_app.config['TMP_FOLDER'], hash, type))
-    return json.dumps(json_dict), json_dict
-
-
 def return_json(message, mobideep_return_code=1, http_code=200, result=None):
     # prepare flask response
     return make_response(jsonify({
