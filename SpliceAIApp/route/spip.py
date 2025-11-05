@@ -25,8 +25,8 @@ def return_json(message, spip_return_code=1, http_code=200, result=None):
 def run_spip(args_list):
     return subprocess.run(
         args_list,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT
+        # stdout=subprocess.DEVNULL,
+        # stderr=subprocess.STDOUT
     )
 
 
