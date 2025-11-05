@@ -93,7 +93,7 @@ class Spip(Resource):
                     '-g',
                     'hg38',
                     '--transcriptome',
-                    '{0}/hidden/RefFiles/transcriptome_hg38.RData'.format(getAppRootDirectory())
+                    '/hidden/RefFiles/transcriptome_hg38.RData'
                 ])
                 result = run_spip(args_list)
                 print(args_list)
