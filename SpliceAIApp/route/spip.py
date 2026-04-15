@@ -68,7 +68,7 @@ class Spip(Resource):
                     redis_result
                 )
 
-            if re.search(r'^[\w-]+\tN[MR]_\d+\.\d{1,2}:c\.[\w\*\+_>-]+$', raw_input):
+            if re.search(r'^[\w-]+\tN[MR]_\d+\.\d{1,2}:[cn]\.[\w\*\+_>-]+$', raw_input):
                 spip_input = "gene\tvarID\n{0}\n".format(raw_input)
                 # create temp file for variant
                 # file is created in temp dir, named {hash}_spip.txt, and contains raw_input
