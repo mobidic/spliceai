@@ -58,20 +58,20 @@ class MissenseVisual(Resource):
             chrom_match = re.match(r'([\dXY]{1,2})$', input['chromosome'])
             refseq_match = re.match(r'(NM_\d+\.\d{1,2})$', input['ncbi_refseq'])
             gene_match = re.match(r'([\w\d-]+)$', input['gene_symbol'])
-            # start_match = re.match(r'(\d+)$', input['start'])
-            # end_match = re.match(r'(\d+)$', input['end'])
+            start_match = re.match(r'(\d+)$', input['start'])
+            end_match = re.match(r'(\d+)$', input['end'])
             if dataset_match and \
                     chrom_match and \
                     refseq_match and \
                     gene_match and \
-                    isinstance(input['start'], int) and \
-                    isinstance(input['end'], int):
+                    start_match and \
+                    end_match:
                 dataset = dataset_match.group(1)
                 chrom = chrom_match.group(1)
                 refseq = refseq_match.group(1)
                 gene = gene_match.group(1)
-                start = input['start']
-                end = input['end']
+                start = start_match.group(1)
+                end = end_match.group(1)
                 # convert dataset into file
                 vcf_file = current_app.config['GNOMAD'] if dataset == 'gnomad' else current_app.config['CLINVAR']
 
