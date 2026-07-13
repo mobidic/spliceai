@@ -3,6 +3,7 @@ import re
 import sys
 import argparse
 from cyvcf2 import VCF
+import json
 
 
 def to_float(value):
@@ -42,28 +43,28 @@ def ms_vis_parse_variant_record(variant, gene_symbol, refseq):
         
         aa_position = int(match.group(1))
         variant_data = {
-            'chrom': chrom, 'pos': pos, 'ref': ref, 'alt': alt,
-            'variant_id': variant_id,
-            'gene': entry_gene, 'transcript': refseq, 'biotype': biotype,
-            'aa_position': aa_position, 'aa_change': aa_change,
-            'AC_joint': info_dict.get('AC_joint', 0),
-            'AC_genomes': info_dict.get('AC_genomes', 0),
-            'nhomalt_joint': info_dict.get('nhomalt_joint', 0),
-            'nhomalt_genomes': info_dict.get('nhomalt_genomes', 0),
+            "chrom": chrom, "pos": pos, "ref": ref, "alt": alt,
+            "variant_id": variant_id,
+            "gene": entry_gene, "transcript": refseq, "biotype": biotype,
+            "aa_position": aa_position, "aa_change": aa_change,
+            "AC_joint": info_dict.get("AC_joint", 0),
+            "AC_genomes": info_dict.get("AC_genomes", 0),
+            "nhomalt_joint": info_dict.get("nhomalt_joint", 0),
+            "nhomalt_genomes": info_dict.get("nhomalt_genomes", 0),
             # Convert all scores to float
-            'revel': to_float(info_dict.get('REVEL')),
-            'alphamissense': to_float(info_dict.get('am_pathogenicity')),
-            'cadd': to_float(info_dict.get('cadd_v1.7')),
-            'MPC': to_float(info_dict.get('MPC')),
-            'mistic': to_float(info_dict.get('MISTIC_score')),
-            'mistic_pred': info_dict.get('MISTIC_pred'),  # Keep as string
-            'popEVE': to_float(info_dict.get('popEVE')),
-            'bayesdel': to_float(info_dict.get('BayesDel_nsfp33a_noAF')),
-            'VARITY_R_LOO': to_float(info_dict.get('VARITY_R_LOO')),
+            "revel": to_float(info_dict.get("REVEL")),
+            "alphamissense": to_float(info_dict.get("am_pathogenicity")),
+            "cadd": to_float(info_dict.get("cadd_v1.7")),
+            "MPC": to_float(info_dict.get("MPC")),
+            "mistic": to_float(info_dict.get("MISTIC_score")),
+            "mistic_pred": info_dict.get("MISTIC_pred"),  # Keep as string
+            "popEVE": to_float(info_dict.get("popEVE")),
+            "bayesdel": to_float(info_dict.get("BayesDel_nsfp33a_noAF")),
+            "VARITY_R_LOO": to_float(info_dict.get("VARITY_R_LOO")),
             # === CLINVAR SPECIFIC FIELDS ===
-            'CLNDN': info_dict.get('CLNDN'),
-            'CLNREVSTAT': info_dict.get('CLNREVSTAT'),
-            'CLNSIG': info_dict.get('CLNSIG')
+            "CLNDN": info_dict.get("CLNDN"),
+            "CLNREVSTAT": info_dict.get("CLNREVSTAT"),
+            "CLNSIG": info_dict.get("CLNSIG")
         }
         parsed_variants.append(variant_data)
     return parsed_variants
@@ -99,7 +100,7 @@ def main():
         for variant in vcf(region):
             variants.extend(ms_vis_parse_variant_record(variant, gene_symbol, refseq))
         # to STDOUT
-        print(variants)
+        print(json.dumps(variants))
     else:
         print('Bad parameters')
 

@@ -111,12 +111,12 @@ class MissenseVisual(Resource):
                 if result.returncode == 0:
                     # success
                     # treat result to return them as json
-                    if (re.split(r'\n', str(result.stdout, 'utf-8'))[0] == 'Bad parameters'):
+                    if (result.stdout == 'Bad parameters'):
                         return return_json('Bad Missense-visual parameters submitted to the script', 1)
-                    results = re.split(r'\n', str(result.stdout, 'utf-8'))
+                    # results = json.loads(result.stdout)
                     ms_visual_results = {
                         'dataset': dataset,
-                        'ms_visual': results[0]
+                        'ms_visual': json.loads(result.stdout)
                     }
 
                     r.set(raw_input_hash, json.dumps(ms_visual_results))
