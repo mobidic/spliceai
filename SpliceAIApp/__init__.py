@@ -4,6 +4,7 @@ from flask_restful import Api
 from SpliceAIApp.route.spliceai import SpliceAi
 from SpliceAIApp.route.mobideep import MobiDeep
 from SpliceAIApp.route.spip import Spip
+from SpliceAIApp.route.missense_visual import MissenseVisual
 from SpliceAIApp.route.hello import Hello
 
 
@@ -19,6 +20,7 @@ def create_app(test_config=None):
     api.add_resource(SpliceAi, "/spliceai")
     api.add_resource(MobiDeep, "/mobideep")
     api.add_resource(Spip, "/spip")
+    api.add_resource(MissenseVisual, "/missense_visual")
     api.add_resource(Hello, "/hello")
     # ensure the instance folder exists
     try:
